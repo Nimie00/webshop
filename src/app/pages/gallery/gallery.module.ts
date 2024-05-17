@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 import { GalleryRoutingModule } from './gallery-routing.module';
 import { GalleryComponent } from './gallery.component';
@@ -34,8 +34,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    NgOptimizedImage
+    MatButtonModule
   ]
 })
 export class GalleryModule { }

@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/services/auth.guard';
 
-export const routes: Routes = [
+// lazy-loading
+const routes: Routes = [
   {
     path: 'main',
     loadChildren: () => import('./pages/main/main.module').then(m => m.MainModule),
