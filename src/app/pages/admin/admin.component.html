@@ -1,0 +1,10 @@
+<div *ngIf="isLoggedIn && isAdmin">
+  <h1>Admin Dashboard</h1>
+  <app-product-form></app-product-form>
+</div>
+<div *ngIf="!isLoggedIn">
+  <p>You must be logged in to view this page.</p>
+</div>
+<div *ngIf="isLoggedIn && !isAdmin">
+  <p>You do not have the necessary permissions to view this page.</p>
+</div>

@@ -32,6 +32,7 @@ export class RegisterComponent implements OnInit {
           id: cred.user?.uid as string,
           email: this.registerForm.get('email')?.value as string,
           username: (this.registerForm.get('email')?.value as string).split('@')[0],
+          isAdmin: false,
         };
         this.userService.create(user)
           .then((_) => {

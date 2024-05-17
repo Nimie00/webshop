@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/services/auth.guard';
-
+import { AdminGuard } from './shared/services/admin.guard';
+import { AdminComponent } from './pages/admin/admin.component';
 // lazy-loading
 const routes: Routes = [
   {
@@ -18,9 +19,9 @@ const routes: Routes = [
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundModule)
   },
   {
-    path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [AuthGuard, AdminGuard]
   },
   { path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
   { path: 'register', loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterModule) },
@@ -32,6 +33,11 @@ const routes: Routes = [
     path: 'product/:id',
     loadChildren: () => import('./pages/product-details/product-details.module').then(m => m.ProductDetailsModule),
     canActivate: [AuthGuard]
+  },
+  {
+    path: '',
+    redirectTo: '/login',
+    pathMatch: 'full'
   },
   {
     path: '**',

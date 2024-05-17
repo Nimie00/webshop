@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable, of } from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Observable, of } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { User } from '../models/User';
 
 @Injectable({
@@ -16,7 +16,18 @@ export class AuthService {
       switchMap(user => {
         if (user) {
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges().pipe(
-            map(userData => ({ ...userData, id: user.uid }) as User)
+            map(firestoreUser => {
+              if (firestoreUser) {
+                return {
+                  displayName: user.displayName,
+                  photoURL: user.photoURL,
+                  emailVerified: user.emailVerified,
+                  ...firestoreUser
+                };
+              } else {
+                return null;
+              }
+            })
           );
         } else {
           return of(null);
@@ -33,8 +44,8 @@ export class AuthService {
     return this.auth.createUserWithEmailAndPassword(email, password);
   }
 
-  isUserLoggedIn() {
-    return this.auth.user;
+  isUserLoggedIn(): Observable<boolean> {
+    return this.auth.authState.pipe(map(user => !!user));
   }
 
   logout() {
@@ -43,5 +54,13 @@ export class AuthService {
 
   getUser(): Observable<User | null> {
     return this.user$;
+  }
+
+  createUser(user: User) {
+    return this.afs.doc(`users/${user.id}`).set(user);
+  }
+
+  isAdmin(user: User) {
+    return user.isAdmin;
   }
 }

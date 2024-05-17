@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from './shared/services/auth.service';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +13,8 @@ import { AuthService } from './shared/services/auth.service';
 export class AppComponent implements OnInit {
   page = '';
   routes: Array<string> = [];
-  loggedInUser?: firebase.default.User | null;
-    title: any;
+  loggedInUser?: firebase.User | null;
+  title: any;
 
   constructor(private router: Router, private authService: AuthService) {
     // parameter adattagok
@@ -31,13 +32,15 @@ export class AppComponent implements OnInit {
         this.page = currentPage;
       }
     });
-    this.authService.isUserLoggedIn().subscribe(user => {
+
+    // Frissítjük a metódust a helyes User objektum lekérésére
+    this.authService.getUser().subscribe(user => {
       console.log(user);
-      this.loggedInUser = user;
+      this.loggedInUser = user as unknown as firebase.User;
       localStorage.setItem('user', JSON.stringify(this.loggedInUser));
     }, error => {
       console.error(error);
-      localStorage.setItem('user', JSON.stringify('null'));
+      localStorage.setItem('user', JSON.stringify(null));
     });
   }
 
