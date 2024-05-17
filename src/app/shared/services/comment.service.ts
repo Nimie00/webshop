@@ -1,3 +1,4 @@
+// comment.service.ts
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Comment } from '../models/Comment';
@@ -7,29 +8,23 @@ import { Comment } from '../models/Comment';
 })
 export class CommentService {
 
-  collectionName = 'Comments';
+  collectionName = 'comments';
 
   constructor(private afs: AngularFirestore) { }
 
-  create(comment: Comment) {
-    comment.id = this.afs.createId();
-    return this.afs.collection<Comment>(this.collectionName).doc(comment.id).set(comment);
-    // return this.afs.collection<Comment>(this.collectionName).add(comment);
+  getCommentsByProductId(productId: number) {
+    return this.afs.collection<Comment>(this.collectionName, ref => ref.where('productId', '==', productId)).valueChanges({ idField: 'id' });
   }
 
-  getAll() {
-    return this.afs.collection<Comment>(this.collectionName).valueChanges();
+  createComment(comment: Comment) {
+    return this.afs.collection<Comment>(this.collectionName).doc(comment.id.toString()).set(comment);
   }
 
-  update(comment: Comment) {
-    return this.afs.collection<Comment>(this.collectionName).doc(comment.id).set(comment);
+  updateComment(comment: Comment) {
+    return this.afs.collection<Comment>(this.collectionName).doc(comment.id.toString()).set(comment);
   }
 
-  delete(id: string) {
-    return this.afs.collection<Comment>(this.collectionName).doc(id).delete();
-  }
-
-  getCommentsByImageId(imageId: string) {
-    return this.afs.collection<Comment>(this.collectionName, ref => ref.where('imageId', '==', imageId).orderBy('date', 'asc')).valueChanges();
+  deleteComment(commentId: number) {
+    return this.afs.collection<Comment>(this.collectionName).doc(commentId.toString()).delete();
   }
 }

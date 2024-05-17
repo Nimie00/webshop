@@ -10,11 +10,6 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'gallery',
-    loadChildren: () => import('./pages/gallery/gallery.module').then(m => m.GalleryModule),
-    canActivate: [AuthGuard]
-  },
-  {
     path: 'contact',
     loadChildren: () => import('./pages/contact/contact.module').then(m => m.ContactModule)
   },
@@ -30,10 +25,20 @@ const routes: Routes = [
   { path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
   { path: 'register', loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterModule) },
   {
+    path: 'products',
+    loadChildren: () => import('./pages/product-list/product-list.module').then(m => m.ProductListModule)
+  },
+  {
+    path: 'product/:id',
+    loadChildren: () => import('./pages/product-details/product-details.module').then(m => m.ProductDetailsModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     redirectTo: '/not-found'
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -1,4 +1,4 @@
-export const GalleryObject = [
+export const ItemObjects = [
     {
         'id': 'OQyRttOV4l8',
         'user_name': 'Gina Smith',

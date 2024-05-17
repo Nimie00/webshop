@@ -1,0 +1,22 @@
+<div class="product-list">
+  <div *ngIf="!isLoggedIn" class="login-message">
+    Log in if you want to see more products
+  </div>
+  <div class="products">
+    <mat-card *ngFor="let product of products" class="product-item">
+      <div class="product-image" *ngIf="isLoggedIn">
+        <a [routerLink]="['/product', product.id]">
+          <img [src]="product.imageId" alt="{{ product.name }}">
+        </a>
+      </div>
+      <div class="product-details">
+        <h3>{{ product.name }}</h3>
+        <p *ngIf="isLoggedIn">{{ product.price | currency }}</p>
+      </div>
+    </mat-card>
+  </div>
+  <div class="pagination">
+    <button mat-button (click)="prev()" [disabled]="offset === 0">Previous</button>
+    <button mat-button (click)="next()" [disabled]="products.length < limit">Next</button>
+  </div>
+</div>

@@ -1,7 +1,8 @@
 export interface Comment {
-    id: string;
-    username: string;
-    comment: string;
-    date: number;
-    imageId?: string;
+  id: number;
+  userId: number;
+  productId: number;
+  username: string;
+  comment: string;
+  date: number;
 }
