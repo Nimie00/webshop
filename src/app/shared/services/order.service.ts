@@ -1,37 +1,41 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Order } from '../models/Order';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
+  private collectionName = 'orders';
 
-  collectionName = 'orders';
+  constructor(private afs: AngularFirestore) {}
 
-  constructor(private afs: AngularFirestore) { }
-
-  getOrdersByUserId(userId: number) {
-    return this.afs.collection<Order>(this.collectionName, ref => ref.where('userId', '==', userId)).valueChanges({ idField: 'id' });
+  createOrder(userId: string, productId: string): Promise<void> {
+    const orderId = this.afs.createId();
+    return this.afs.collection(this.collectionName).doc(orderId).set({
+      userId,
+      productId
+    });
   }
 
-  createOrder(order: Order) {
-    return this.afs.collection<Order>(this.collectionName).doc(order.id.toString()).set(order);
+  cancelOrder(userId: string, productId: string): Promise<void> {
+    return this.afs.collection(this.collectionName, ref => ref.where('userId', '==', userId).where('productId', '==', productId)).get().toPromise().then(snapshot => {
+      if (snapshot) {
+        const batch = this.afs.firestore.batch();
+        snapshot.docs.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch.commit();
+      } else {
+        return Promise.resolve(); // Ha nincs snapshot, nincs mit törölni
+      }
+    });
   }
 
-  updateOrder(order: Order) {
-    return this.afs.collection<Order>(this.collectionName).doc(order.id.toString()).set(order);
-  }
-
-  deleteOrder(orderId: number) {
-    return this.afs.collection<Order>(this.collectionName).doc(orderId.toString()).delete();
-  }
-
-  hasOrderedProduct(userId: number, productId: number): Observable<boolean> {
-    return this.getOrdersByUserId(userId).pipe(
-      map(orders => orders.some(order => order.products.some(p => p[0] === productId)))
+  checkIfOrdered(userId: string, productId: string): Observable<boolean> {
+    return this.afs.collection(this.collectionName, ref => ref.where('userId', '==', userId).where('productId', '==', productId)).get().pipe(
+      map(snapshot => !snapshot.empty)
     );
   }
 }

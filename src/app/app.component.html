@@ -13,9 +13,9 @@
       <div class="navigation-wrapper">
         <ul class="navigation-items">
           <li *ngIf="!(loggedInUser)"><a routerLink="/login">Login</a></li>
-          <li *ngIf="loggedInUser"><a routerLink="/login" (click)="logout()">Logouts</a></li>
-          <li><a routerLink="/register">Register</a></li>
-          <li><a routerLink="/main">Main</a></li>
+          <li *ngIf="loggedInUser"><a routerLink="/login" (click)="logout()">Logout</a></li>
+          <li *ngIf="!(loggedInUser)"><a routerLink="/register">Register</a></li>
+          <li *ngIf="(loggedInUser)"><a routerLink="/main">Main</a></li>
           <li><a routerLink="/products">Products</a></li>
           <li><a routerLink="/contact">Contact</a></li>
         </ul>

@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, EventEmitter, Output, Input } from '@angular/core';
+import {User} from "../models/User";
 
 @Component({
   selector: 'app-menu',
@@ -8,7 +9,7 @@ import { Component, OnInit, AfterViewInit, EventEmitter, Output, Input } from '@
 export class MenuComponent implements OnInit, AfterViewInit {
 
   @Input() currentPage: string = '';
-  @Input() loggedInUser?: firebase.default.User | null;
+  @Input() loggedInUser?: User | null;
   @Output() selectedPage: EventEmitter<string> = new EventEmitter();
   @Output() onCloseSidenav: EventEmitter<boolean> = new EventEmitter();
   @Output() onLogout: EventEmitter<boolean> = new EventEmitter();

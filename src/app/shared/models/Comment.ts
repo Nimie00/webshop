@@ -1,8 +1,8 @@
 export interface Comment {
-  id: number;
-  userId: number;
-  productId: number;
-  username: string;
+  id: string; // A Firestore által generált azonosító
+  userId: string;
+  productId: string;
   comment: string;
   date: number;
+  rating: number;
 }

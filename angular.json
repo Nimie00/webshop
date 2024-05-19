@@ -112,8 +112,16 @@
             "prerender": false,
             "ssr": false,
             "browserTarget": "webShop:build:production",
-            "firebaseProject": "webShop-nimie",
-            "firebaseHostingSite": "webShop-nimie"
+            "firebaseProject": "webshop-nimie",
+            "firebaseHostingSite": "webShop"
+          },
+          "configurations": {
+            "production": {
+              "firebaseHostingSite": "webShop"
+            },
+            "development": {
+              "firebaseHostingSite": "webShop"
+            }
           }
         }
       }

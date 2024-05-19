@@ -1,34 +1,69 @@
-// product.service.ts
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Product } from '../models/Product';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
+  private collectionName = 'products';
+  private productsCollection: AngularFirestoreCollection<Product>;
 
-  collectionName = 'products';
-
-  constructor(private afs: AngularFirestore) { }
-
-  getProducts(limit: number) {
-    return this.afs.collection<Product>(this.collectionName, ref => ref.limit(limit)).valueChanges({ idField: 'id' });
+  constructor(private afs: AngularFirestore) {
+    this.productsCollection = afs.collection<Product>(this.collectionName);
   }
 
-  getProductById(id: number) {
-    return this.afs.collection<Product>(this.collectionName).doc(id.toString()).valueChanges();
+  getProducts(limitCount: number, offset: number): Observable<Product[]> {
+    return this.afs.collection<Product>(this.collectionName, ref => ref
+      .orderBy('id') // feltételezve, hogy van egy 'id' mező
+      .startAt(offset)
+      .limit(limitCount))
+      .snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as Product;
+          return { ...data };
+        }))
+      );
   }
 
-  createProduct(product: Product) {
-    return this.afs.collection<Product>(this.collectionName).doc(product.id.toString()).set(product);
+  getProductById(id: number): Observable<Product | null> {
+    const docName = id === 1 ? 'product' : `product${id}`;
+    return this.afs.collection<Product>(this.collectionName).doc(docName).snapshotChanges().pipe(
+      map(action => {
+        const data = action.payload.data();
+        if (data) {
+          return { ...data } as Product;
+        } else {
+          return null;
+        }
+      })
+    );
   }
 
-  updateProduct(product: Product) {
-    return this.afs.collection<Product>(this.collectionName).doc(product.id.toString()).set(product);
+  createProduct(product: Product): Promise<void> {
+    return this.afs.collection(this.collectionName).doc(product.id).set(product);
   }
 
-  deleteProduct(productId: number) {
-    return this.afs.collection<Product>(this.collectionName).doc(productId.toString()).delete();
+  updateProduct(product: Product): Promise<void> {
+    return this.productsCollection.doc(product.id.toString()).set(product);
+  }
+
+  deleteProduct(productId: number): Promise<void> {
+    return this.productsCollection.doc(productId.toString()).delete();
+  }
+
+  getAllProducts(): Observable<Product[]> {
+    return this.afs.collection<Product>(this.collectionName).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Product;
+        return { ...data };
+      }))
+    );
+  }
+
+  createId(): string {
+    return this.afs.createId();
   }
 }

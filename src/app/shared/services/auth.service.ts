@@ -19,13 +19,20 @@ export class AuthService {
             map(firestoreUser => {
               if (firestoreUser) {
                 return {
-                  displayName: user.displayName,
-                  photoURL: user.photoURL,
-                  emailVerified: user.emailVerified,
-                  ...firestoreUser
+                  ...firestoreUser,
+                  id: user.uid,
+                  email: user.email || '',
                 };
               } else {
-                return null;
+                // Ha nem található a Firestore-ban a felhasználó, akkor hozzuk létre
+                const newUser: User = {
+                  id: user.uid,
+                  email: user.email || '',
+                  isAdmin: false,
+                  username: user.email?.split('@')[0] || ''
+                };
+                this.createUser(newUser);
+                return newUser;
               }
             })
           );
@@ -60,7 +67,11 @@ export class AuthService {
     return this.afs.doc(`users/${user.id}`).set(user);
   }
 
-  isAdmin(user: User) {
+  isAdmin(user: User): boolean {
     return user.isAdmin;
+  }
+
+  getUserById(userId: string): Observable<User | undefined> {
+    return this.afs.doc<User>(`users/${userId}`).valueChanges();
   }
 }

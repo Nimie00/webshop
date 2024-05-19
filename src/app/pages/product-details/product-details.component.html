@@ -1,27 +1,63 @@
-<div *ngIf="product" class="product-details mat-card">
-  <div class="product-header">
-    <img ngSrc="product.imageId" alt="{{ product.name }}" fill>
-    <h2>{{ product.name }}</h2>
-    <p>{{ product.description }}</p>
-    <p>{{ product.price | currency }}</p>
-  </div>
-
-  <div class="comments-section">
-    <h3>Comments</h3>
-    <div *ngFor="let comment of comments" class="comment">
-      <p><strong>{{ comment.username }}</strong>: {{ comment.comment }}</p>
-      <small>{{ comment.date | date:'short' }}</small>
+<div *ngIf="product">
+  <div class="product-details-container">
+    <div class="product-image">
+      <img *ngIf="productImageUrl" [src]="productImageUrl" alt="{{ product.name }}">
     </div>
-
-    <div *ngIf="userId && (orderService.hasOrderedProduct(userId, product.id) | async)" class="add-comment">
-      <h4>Add a Comment</h4>
-      <form (ngSubmit)="addComment()" [formGroup]="commentForm">
-        <mat-form-field appearance="fill">
-          <mat-label>Write your comment here...</mat-label>
-          <textarea matInput formControlName="commentText"></textarea>
-        </mat-form-field>
-        <button mat-button type="submit">Submit</button>
-      </form>
+    <div class="product-info">
+      <h1><strong>Product name:</strong> {{ product.name }}</h1>
+      <p><strong>Price:</strong> {{ product.price | currency }}</p>
+      <p><strong>Description:</strong> {{ product.description }}</p>
     </div>
   </div>
+
+  <div class="product-actions">
+    <button *ngIf="!hasOrdered" (click)="orderProduct()">Order</button>
+    <button *ngIf="hasOrdered" (click)="cancelOrder()">Delete your order</button>
+  </div>
+
+  <div class="submit-comment" *ngIf="hasOrdered">
+    <p>Rate this product:</p>
+    <div>
+      <label for="rating">Review:</label>
+      <select id="rating" [(ngModel)]="newRating">
+        <option *ngFor="let star of [1, 2, 3, 4, 5]" [value]="star">{{ star }} *</option>
+      </select>
+    </div>
+    <div>
+      <label for="comment">Comment:</label>
+      <textarea id="comment" [(ngModel)]="newComment"></textarea>
+    </div>
+    <button (click)="submitComment()">{{ userComment ? 'Modify review' : 'Submit review' }}</button>
+    <button *ngIf="userComment" (click)="deleteComment()">Delete review</button>
+  </div>
+</div>
+
+<div class="product-comments" *ngIf="comments && comments.length > 0">
+  <h2>Comments</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Review</th>
+      <th>User</th>
+      <th>Date</th>
+      <th>Comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let comment of comments">
+      <td>{{ comment.rating }}</td>
+      <td>{{ getUsernameById(comment.userId) }}</td>
+      <td>{{ comment.date | date }}</td>
+      <td>{{ comment.comment }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">Previous page</button>
+    <span>Page {{ currentPage }}</span>
+    <button (click)="nextPage()" [disabled]="comments.length < commentsPerPage">Next page</button>
+  </div>
+</div>
+<div *ngIf="comments && comments.length === 0">
+  <p>There are no comments yet on this product.</p>
 </div>

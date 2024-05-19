@@ -1,40 +1,45 @@
 a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 a:hover, a:active {
-    color: lightgray;
+  color: lightgray;
 }
 
 .navigation-items {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 @media screen and (max-width: 576px) {
-    .navigation-items {
-        display: none;
-    }
- }
+  .navigation-items {
+    display: none;
+  }
+}
 
 mat-sidenav {
-    width: 250px;
+  width: 250px;
 }
 
 .navigation-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    padding-left: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 100px;
+  width: 100%;
+}
+
+.navigation-title {
+  margin-right: auto; /* Balra igazítja az oldalcímet */
 }
 
 @media screen and (min-width: 576px) {
-    .menu-wrapper {
-        display: none;
-    }
+  .menu-wrapper {
+    display: none;
+  }
 }
