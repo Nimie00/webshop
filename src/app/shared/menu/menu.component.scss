@@ -6,3 +6,19 @@ a {
 a:hover, a:active {
     color: lightgray;
 }
+
+.mat-nav-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 48px;
+}
+
+.mat-icon {
+  margin-right: 8px;
+}
