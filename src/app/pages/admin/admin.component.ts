@@ -21,6 +21,7 @@ export class AdminComponent implements OnInit {
         this.authService.getUser().subscribe(user => {
           this.user = user;
           this.isAdmin = user?.isAdmin || false;
+          console.log(`Admin status: ${this.isAdmin}`);
         });
       }
     });

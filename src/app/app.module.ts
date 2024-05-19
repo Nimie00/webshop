@@ -25,6 +25,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {AdminModule} from "./pages/admin/admin.module";
+import {TruncatePipe} from "./shared/pipes/truncate.pipe";
+import {DateFormatPipe} from "./shared/pipes/date-format.pipe";
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import {AdminModule} from "./pages/admin/admin.module";
     AngularFireModule.initializeApp(environment.firebase),
     BrowserModule,
     AppRoutingModule,
+    AdminModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -52,7 +55,8 @@ import {AdminModule} from "./pages/admin/admin.module";
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    AdminModule,
+    TruncatePipe,
+    DateFormatPipe,
   ],
   providers: [
     provideAuth(() => getAuth()),

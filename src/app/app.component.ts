@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   page = '';
   routes: Array<string> = [];
   loggedInUser?: User | null;  // Saját User típus
+  adminUser?: true| false;
   title: any;
 
   constructor(private router: Router, private authService: AuthService) {}
@@ -33,10 +34,11 @@ export class AppComponent implements OnInit {
     this.authService.getUser().subscribe({
       next: (user) => {
         this.loggedInUser = user;
+        this.adminUser = !!user?.isAdmin;
         localStorage.setItem('user', JSON.stringify(this.loggedInUser));
       },
       error: (error) => {
-        console.error(error);
+        console.log(error);
         localStorage.setItem('user', JSON.stringify(null));
       }
     });
@@ -62,7 +64,7 @@ export class AppComponent implements OnInit {
       localStorage.removeItem('user');  // Felhasználói adatok eltávolítása kijelentkezéskor
       this.router.navigate(['/']);  // Navigáció az alapértelmezett oldalra kijelentkezés után
     }).catch(error => {
-      console.error(error);
+      console.log(error);
     });
   }
 }

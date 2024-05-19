@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/services/auth.guard';
 import { AdminGuard } from './shared/services/admin.guard';
-import { AdminComponent } from './pages/admin/admin.component';
 // lazy-loading
 const routes: Routes = [
   {
@@ -20,7 +19,7 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    component: AdminComponent,
+    loadChildren: () => import('./pages/product-form/product-form.module').then(m => m.ProductFormModule),
     canActivate: [AuthGuard, AdminGuard]
   },
   { path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
@@ -34,6 +33,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/product-details/product-details.module').then(m => m.ProductDetailsModule),
     canActivate: [AuthGuard]
   },
+
   {
     path: '',
     redirectTo: '/login',

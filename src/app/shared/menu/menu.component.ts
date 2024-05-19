@@ -10,6 +10,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   @Input() currentPage: string = '';
   @Input() loggedInUser?: User | null;
+  @Input() adminUser?: true | false;
   @Output() selectedPage: EventEmitter<string> = new EventEmitter();
   @Output() onCloseSidenav: EventEmitter<boolean> = new EventEmitter();
   @Output() onLogout: EventEmitter<boolean> = new EventEmitter();

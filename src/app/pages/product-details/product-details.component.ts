@@ -27,7 +27,7 @@ export class ProductDetailsComponent implements OnInit {
   newRating: number = 0;
   newComment: string = '';
   currentPage = 1;
-  commentsPerPage = 10;
+  commentsPerPage = 5;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,12 +74,12 @@ export class ProductDetailsComponent implements OnInit {
           lastValueFrom(imgRef.getDownloadURL()).then(url => {
             this.productImageUrl = url;
           }).catch(error => {
-            console.error('Failed to get download URL:', error);
+            console.log('Failed to get download URL:', error);
           });
         }
       },
       error: (error) => {
-        console.error('Error in ngOnInit:', error);
+        console.log('Error in ngOnInit:', error);
       }
     });
   }
@@ -98,10 +98,9 @@ export class ProductDetailsComponent implements OnInit {
   submitComment(): void {
     if (this.newRating > 0 && this.newComment.trim().length > 0) {
       if (!this.userId || !this.product?.id) {
-        console.error('Missing userId or productId');
+        console.log('Missing userId or productId');
         return;
       }
-
       const comment: Comment = {
         id: this.userComment?.id || this.commentService.createIdd(),
         userId: this.userId,
@@ -118,7 +117,8 @@ export class ProductDetailsComponent implements OnInit {
           this.newComment = '';
           this.userComment = undefined;
         }).catch(error => {
-          console.error('Error occurred while updating the review:', error);
+          console.log('Error occurred while updating the review:', error);
+          alert(error);
         });
       } else {
         this.commentService.addComment(comment).then(() => {
@@ -127,7 +127,8 @@ export class ProductDetailsComponent implements OnInit {
           this.newComment = '';
           this.userComment = comment; // Beállítjuk a userComment változót, hogy a felhasználó frissíthesse vagy törölhesse az értékelést
         }).catch(error => {
-          console.error('Error occurred while saving the review:', error);
+          console.log('Error occurred while saving the review:', error);
+          alert(error);
         });
       }
     } else {
@@ -143,7 +144,8 @@ export class ProductDetailsComponent implements OnInit {
         this.newComment = '';
         this.loadComments(this.product!.id); // Frissítjük a kommenteket
       }).catch(error => {
-        console.error('Error occurred while deleting the review:', error);
+        console.log('Error occurred while deleting the review:', error);
+        alert(error);
       });
     }
   }
@@ -158,7 +160,7 @@ export class ProductDetailsComponent implements OnInit {
         this.hasOrdered = hasOrdered;
       },
       error: (error) => {
-        console.error('Error checking if ordered:', error);
+        console.log('Error checking if ordered:', error);
       }
     });
   }
@@ -181,7 +183,7 @@ export class ProductDetailsComponent implements OnInit {
         alert('Product ordered successfully!');
         this.hasOrdered = true;
       }).catch(error => {
-        console.error('Error ordering product:', error);
+        console.log('Error ordering product:', error);
       });
     }
   }
@@ -192,7 +194,7 @@ export class ProductDetailsComponent implements OnInit {
         alert('Order cancelled successfully!');
         this.hasOrdered = false;
       }).catch(error => {
-        console.error('Error cancelling order:', error);
+        console.log('Error cancelling order:', error);
       });
     }
   }

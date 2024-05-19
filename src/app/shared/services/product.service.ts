@@ -15,22 +15,30 @@ export class ProductService {
     this.productsCollection = afs.collection<Product>(this.collectionName);
   }
 
-  getProducts(limitCount: number, offset: number): Observable<Product[]> {
-    return this.afs.collection<Product>(this.collectionName, ref => ref
-      .orderBy('id') // feltételezve, hogy van egy 'id' mező
-      .startAt(offset)
-      .limit(limitCount))
-      .snapshotChanges().pipe(
-        map(actions => actions.map(a => {
-          const data = a.payload.doc.data() as Product;
-          return { ...data };
-        }))
-      );
+  getProducts(limitCount: number, lastDocId?: string): Observable<Product[]> {
+    let query = this.afs.collection<Product>(this.collectionName, ref => {
+      let queryRef = ref.orderBy('id').limit(limitCount);
+      if (lastDocId) {
+        queryRef = queryRef.startAfter(lastDocId);
+      }
+      return queryRef;
+    });
+    return query.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Product;
+        return { ...data };
+      }))
+    );
+  }
+
+  getProductCount(): Observable<number> {
+    return this.afs.collection<Product>(this.collectionName).snapshotChanges().pipe(
+      map(actions => actions.length)
+    );
   }
 
   getProductById(id: number): Observable<Product | null> {
-    const docName = id === 1 ? 'product' : `product${id}`;
-    return this.afs.collection<Product>(this.collectionName).doc(docName).snapshotChanges().pipe(
+    return this.afs.collection<Product>(this.collectionName).doc(id.toString()).snapshotChanges().pipe(
       map(action => {
         const data = action.payload.data();
         if (data) {
@@ -46,14 +54,6 @@ export class ProductService {
     return this.afs.collection(this.collectionName).doc(product.id).set(product);
   }
 
-  updateProduct(product: Product): Promise<void> {
-    return this.productsCollection.doc(product.id.toString()).set(product);
-  }
-
-  deleteProduct(productId: number): Promise<void> {
-    return this.productsCollection.doc(productId.toString()).delete();
-  }
-
   getAllProducts(): Observable<Product[]> {
     return this.afs.collection<Product>(this.collectionName).snapshotChanges().pipe(
       map(actions => actions.map(a => {
@@ -63,7 +63,7 @@ export class ProductService {
     );
   }
 
-  createId(): string {
+  createIdd(): string {
     return this.afs.createId();
   }
 }

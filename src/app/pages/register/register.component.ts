@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { User } from '../../shared/models/User';
+import { Router } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class RegisterComponent implements OnInit {
     rePassword: new FormControl('')
   });
 
-  constructor(private location: Location, private authService: AuthService, private userService: UserService) { }
+  constructor(private router: Router, private location: Location, private authService: AuthService, private userService: UserService) { }
 
   ngOnInit(): void {
   }
@@ -37,13 +38,20 @@ export class RegisterComponent implements OnInit {
         this.userService.create(user)
           .then((_) => {
             console.log('User added successfully.');
+            alert('Registration successful, you will be transported to /login after clicking ok');
+
+            setTimeout(() => {
+              this.router.navigateByUrl('/login');
+            }, 200); // 3000 ms = 3 seconds
           })
           .catch((error) => {
-            console.error(error);
+            console.log(error);
+            alert(error);
           });
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
+        alert(error);
       });
   }
 

@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductFormComponent } from './product-form.component';
+import {AdminRoutingModule} from "../admin/admin-routing.module";
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ProductFormComponent } from './product-form.component';
   ],
   imports: [
     CommonModule,
+    AdminRoutingModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,

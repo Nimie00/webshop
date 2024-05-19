@@ -12,7 +12,7 @@ export const AdminGuard: CanActivateFn = (route, state) => {
     map(user => !!user && user.isAdmin),
     tap(isAdmin => {
       if (!isAdmin) {
-        router.navigate(['/']);
+        router.navigate(['/login']);
       }
     })
   );

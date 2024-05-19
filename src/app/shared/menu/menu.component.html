@@ -7,7 +7,7 @@
         <mat-icon>logout</mat-icon>
         <span>Logout</span>
     </a>
-    <a mat-list-item routerLink="/register" (click)="close()">
+    <a mat-list-item routerLink="/register" (click)="close()" *ngIf="!loggedInUser">
         <mat-icon>app_registration</mat-icon>
         <span>Register</span>
     </a>
@@ -19,8 +19,17 @@
     <mat-icon>grid_view</mat-icon>
     <span>products</span>
   </a>
+  <a mat-list-item routerLink="/products" (click)="close()">
+    <mat-icon>grid_view</mat-icon>
+    <span>products</span>
+  </a>
     <a mat-list-item routerLink="/contact" (click)="close()">
         <mat-icon>info</mat-icon>
         <span>Contact</span>
     </a>
+
+  <a mat-list-item routerLink="/admin" (click)="close()"  *ngIf="loggedInUser && adminUser">
+    <mat-icon>Admin</mat-icon>
+    <span>Admin</span>
+  </a>
 </mat-nav-list>

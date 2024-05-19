@@ -25,7 +25,7 @@
     </div>
     <div>
       <label for="comment">Comment:</label>
-      <textarea id="comment" [(ngModel)]="newComment"></textarea>
+      <textarea id="comment" [(ngModel)]="newComment" maxlength="1000"></textarea>
     </div>
     <button (click)="submitComment()">{{ userComment ? 'Modify review' : 'Submit review' }}</button>
     <button *ngIf="userComment" (click)="deleteComment()">Delete review</button>
@@ -47,7 +47,7 @@
     <tr *ngFor="let comment of comments">
       <td>{{ comment.rating }}</td>
       <td>{{ getUsernameById(comment.userId) }}</td>
-      <td>{{ comment.date | date }}</td>
+      <td>{{ comment.date | dateFormat }}</td>
       <td>{{ comment.comment }}</td>
     </tr>
     </tbody>

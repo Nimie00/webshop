@@ -3,8 +3,7 @@ import { ProductService } from '../../shared/services/product.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Product } from '../../shared/models/Product';
-import { Subscription } from 'rxjs';
-import { lastValueFrom } from 'rxjs';
+import { Subscription, lastValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,8 +14,8 @@ import { Router } from '@angular/router';
 export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   isLoggedIn = false;
-  limit = 10;
-  offset = 0;
+  limit = 8;
+  offset: string | undefined = undefined; // Using a string to represent the last product ID
   currentPage = 1;
   totalProducts = 0;
   private subscriptions: Subscription = new Subscription();
@@ -31,17 +30,23 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const authSubscription = this.authService.isUserLoggedIn().subscribe(async isLoggedIn => {
       this.isLoggedIn = isLoggedIn;
-      this.limit = this.isLoggedIn ? 24 : 10;
+      this.limit = this.isLoggedIn ? 16 : 8;
+      this.loadProductCount();
       await this.loadProducts();
     });
 
     this.subscriptions.add(authSubscription);
   }
 
+  loadProductCount(): void {
+    this.productService.getProductCount().subscribe(count => {
+      this.totalProducts = count;
+    });
+  }
+
   async loadProducts() {
-    const productSubscription = this.productService.getProducts(this.limit, this.offset).subscribe(async data => {
+    this.productService.getProducts(this.limit, this.offset).subscribe(async data => {
       this.products = data;
-      this.totalProducts = data.length;
 
       for (const product of this.products) {
         if (product.imageId) {
@@ -49,27 +54,29 @@ export class ProductListComponent implements OnInit, OnDestroy {
           try {
             product.imageUrl = await lastValueFrom(imgRef.getDownloadURL());
           } catch (error) {
-            console.error(`Failed to get download URL for imageId: ${product.imageId}`, error);
+            console.log(`Failed to get download URL for imageId: ${product.imageId}`, error);
           }
         }
       }
-    });
 
-    this.subscriptions.add(productSubscription);
+      // Update offset with the last product's ID
+      if (this.products.length > 0) {
+        this.offset = this.products[this.products.length - 1].id;
+      }
+    });
   }
 
   async next() {
-    if ((this.offset + this.limit) < this.totalProducts) {
-      this.offset += this.limit;
+    if ((this.currentPage * this.limit) < this.totalProducts) {
       this.currentPage++;
       await this.loadProducts();
     }
   }
 
   async prev() {
-    if (this.offset > 0) {
-      this.offset -= this.limit;
+    if (this.currentPage > 1) {
       this.currentPage--;
+      this.offset = undefined; // Reset offset for previous page
       await this.loadProducts();
     }
   }
